@@ -18,8 +18,6 @@ namespace Server.Controllers
         {
             return Ok(_records);
         }
-
-
         public static Task AddRecords(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
         {
             if (auditRecord == null || auditRecord.Entities == null || !auditRecord.Entities.Any())

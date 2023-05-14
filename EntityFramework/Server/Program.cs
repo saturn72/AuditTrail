@@ -1,11 +1,27 @@
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Controllers;
+using Server.NServiceBus;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.UseNServiceBus(context =>
+{
+    var endpointConfiguration = new EndpointConfiguration("EfAudit");
+    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+    transport.UseConventionalRoutingTopology(QueueType.Quorum);
+    transport.ConnectionString(context.Configuration.GetConnectionString("rabbitMq"));
+    transport.Routing().RouteToEndpoint(typeof(AuditMessage), destination: "EfAudit");
+
+    endpointConfiguration.EnableInstallers();
+    //var endpointInstance = await Endpoint.Start(endpointConfiguration)
+    //        .ConfigureAwait(false);
+    //endpointConfiguration.SendOnly();
+
+    return endpointConfiguration;
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -22,7 +38,10 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
-builder.Services.AddEfAudit(AuditTrailController.AddRecords);
+builder.Services.AddEfAudit(
+    AuditTrailController.AddRecords,
+    NServiceBusEfHandler.Handle
+);
 builder.Services.AddDbContext<CatalogContext>((services, options) =>
 {
     options.UseSqlite($"DataSource=catalog.db")
