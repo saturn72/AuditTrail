@@ -1,4 +1,5 @@
 ﻿using EfAudit;
+using EfAudit.Extractors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers
@@ -20,46 +21,14 @@ namespace Server.Controllers
         }
         public static Task AddRecords(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
         {
-            if (auditRecord == null || auditRecord.Entities == null || !auditRecord.Entities.Any())
-                return Task.CompletedTask;
+            using var scope = services.CreateScope();
 
-            var l = new List<object>();
-            foreach (var e in auditRecord.Entities)
-            {
-                var diff = e.ModifiedProperties.Select(x => new
-                {
-                    attributeName = x.Name,
-                    currentValue = x.CurrentValue,
-                    previousValue = x.OriginalValue,
-                }).ToList();
+            var e = scope.ServiceProvider.GetRequiredService<IDataChangedExtractor>();
+            var r = e.Extract(auditRecord);
 
-                var o = new
-                {
-                    action = e.State,
-                    type = e.TypeName,
-                    value = e.Value,
-                    diff
-                };
-                l.Add(o);
-            }
-            if (!l.Any())
-                return Task.CompletedTask;
+            if (r != null)
+                _records.Add(r);
 
-            var r = new
-            {
-                version = "v1",
-                transaction = new
-                {
-                    success = auditRecord.Success,
-                    id = auditRecord.Uuid,
-                    startedOnUtc = auditRecord.StartedOnUtc,
-                    endedOnUtc = auditRecord.EndedOnUtc,
-                },
-                error = auditRecord.Exception?.InnerException?.Message,
-                trail = l
-            };
-
-            _records.Add(r);
             return Task.CompletedTask;
         }
     }

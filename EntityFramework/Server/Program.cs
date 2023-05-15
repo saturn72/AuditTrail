@@ -1,3 +1,5 @@
+using EfAudit;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Controllers;
@@ -38,17 +40,22 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
 builder.Services.AddEfAudit(
+    builder.Configuration,
     AuditTrailController.AddRecords,
     NServiceBusEfHandler.Handle
 );
 builder.Services.AddDbContext<CatalogContext>((services, options) =>
 {
     options.UseSqlite($"DataSource=catalog.db")
-    .AddAuditInterceptor(services, options => { });
+    .AddAuditInterceptor(services);
 });
 
 var app = builder.Build();
+
+//warm up - validate options
+app.Services.GetRequiredService<IOptionsMonitor<AuditInterceptorOptions>>();
 
 using var scope = app.Services.CreateScope();
 using (var ctx = scope.ServiceProvider.GetRequiredService<CatalogContext>())

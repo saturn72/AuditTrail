@@ -1,4 +1,6 @@
-﻿namespace EfAudit.Extractors
+﻿using static AuditTrail.Common.AuditTrailRecord;
+
+namespace EfAudit.Extractors
 {
     public class DefaultDataChangedExtractor : IDataChangedExtractor
     {
@@ -7,43 +9,54 @@
             if (record == null || record.Entities == null || !record.Entities.Any())
                 return default;
 
-            var l = new List<object>();
+            var atre = new List<AuditTrailRecordEntry>();
             foreach (var e in record.Entities)
             {
-                var diff = e.ModifiedProperties.Select(x => new
-                {
-                    attributeName = x.Name,
-                    currentValue = x.CurrentValue,
-                    previousValue = x.OriginalValue,
-                }).ToList();
-
-                var o = new
-                {
-                    id = e.PrimaryKeyValue,
-                    action = e.State,
-                    type = e.TypeName,
-                    value = e.Value,
-                    diff
-                };
-                l.Add(o);
+                var diff = getDiff(e);
+                var o = getAuditTrailRecordEntry(e, diff);
+                atre.Add(o);
             }
-            if (!l.Any())
+            if (!atre.Any())
                 return default;
-
             return new AuditMessage
             {
                 Version = "v1",
-                
-                Transaction = new
+                SubjectId = record.SubjectId,
+                Source = record.Source,
+                TransactionId = record.TransactionId,
+                Trail = new AuditTrailRecord
                 {
-                    success = record.Success,
-                    id = record.Uuid,
-                    startedOnUtc = record.StartedOnUtc,
-                    endedOnUtc = record.EndedOnUtc,
+                    Success = record.Success.Value,
+                    Id = record.Uuid,
+                    StartedOnUtc = record.StartedOnUtc,
+                    EndedOnUtc = record.EndedOnUtc,
+                    Entries = atre
                 },
                 Error = record.Exception?.InnerException?.Message,
-                Trail = l
             };
+
+            IEnumerable<AuditTrailRecordEntryDiff> getDiff(EntityAudit entry)
+            {
+                return entry.ModifiedProperties?.Select(x => new AuditTrailRecordEntryDiff
+                {
+                    AttributeName = x.Name,
+                    CurrentValue = x.CurrentValue,
+                    PreviousValue = x.OriginalValue,
+                })?.ToList()
+                ?? Enumerable.Empty<AuditTrailRecordEntryDiff>();
+            }
+            AuditTrailRecordEntry getAuditTrailRecordEntry(EntityAudit entry, IEnumerable<AuditTrailRecordEntryDiff> diff)
+            {
+                return new AuditTrailRecordEntry
+                {
+                    EntityId = entry.PrimaryKeyValue,
+                    Action = entry.State,
+                    EntityType = entry.TypeName,
+                    EntityValue = entry.Value,
+                    Diff = diff,
+                };
+            }
+
         }
     }
 }

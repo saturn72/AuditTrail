@@ -2,7 +2,7 @@
 
 namespace System
 {
-    public static class Extensions
+    public static class SystemExtensions
     {
         public static bool HasNoValue(this string? value) => string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
 

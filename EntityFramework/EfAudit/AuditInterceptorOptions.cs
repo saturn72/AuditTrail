@@ -3,15 +3,18 @@ namespace EfAudit
 {
     public class AuditInterceptorOptions
     {
-        public string? ServiceName { get; set; }
-
-        public void Validate(AuditInterceptorOptions options)
+        internal const string Section = "efAudit";
+        public string? Source { get; set; }
+    }
+    public class AuditInterceptorOptionsValidator
+    {
+        public static void Validate(AuditInterceptorOptions options)
         {
             if (options == null)
                 Throw(nameof(options));
 
-            if (options.ServiceName.HasNoValue())
-                Throw(nameof(options.ServiceName));
+            if (options.Source.HasNoValue())
+                Throw(nameof(options.Source));
 
             void Throw(string message) => throw new ArgumentNullException(message);
         }

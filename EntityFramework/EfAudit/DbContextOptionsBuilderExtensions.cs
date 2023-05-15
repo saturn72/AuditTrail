@@ -1,20 +1,13 @@
 ﻿
-using EfAudit;
-
 namespace Microsoft.EntityFrameworkCore
 {
     public static class DbContextOptionsBuilderExtensions
     {
         public static DbContextOptionsBuilder AddAuditInterceptor(
             this DbContextOptionsBuilder builder,
-            IServiceProvider services,
-            Action<AuditInterceptorOptions> configure)
+            IServiceProvider services)
         {
-            var options = new AuditInterceptorOptions();
-            configure(options);
-
-
-            var interceptor = new AuditSaveChangesInterceptor(services, options);
+            var interceptor = services.GetRequiredService<AuditSaveChangesInterceptor>();
             builder.AddInterceptors(interceptor);
 
             return builder;

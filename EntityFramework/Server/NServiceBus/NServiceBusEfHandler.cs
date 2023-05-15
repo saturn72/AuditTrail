@@ -19,8 +19,8 @@ namespace Server.NServiceBus
                 {
                     message.Version = msg.Version;
                     message.Error = msg.Error;
-                    message.Transaction = msg.Transaction;
-                    message.Trail = msg.Trail.Select(x => JsonSerializer.Serialize(x)).ToList();
+                    message.Transaction = msg.Trail;
+                    message.Trail = msg.Trail.Entries?.Select(x => JsonSerializer.Serialize(x)).ToList();
                 },
                 cancellationToken);
         }
