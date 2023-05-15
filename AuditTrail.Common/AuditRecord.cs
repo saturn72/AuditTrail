@@ -1,4 +1,4 @@
-﻿namespace EfAudit
+﻿namespace AuditTrail.Common
 {
     public record AuditRecord
     {

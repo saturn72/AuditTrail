@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace System
+namespace AuditTrail.Common
 {
     public static class ObjectExtensions
     {

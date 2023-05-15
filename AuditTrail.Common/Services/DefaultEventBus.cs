@@ -1,7 +1,6 @@
 ﻿
-using Microsoft.Extensions.Logging;
 
-namespace EfAudit
+namespace AuditTrail.Common.Services
 {
     public class DefaultEventBus : IEventBus
     {

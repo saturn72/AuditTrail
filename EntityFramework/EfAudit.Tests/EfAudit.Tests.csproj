@@ -28,7 +28,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\EfAudit\EfAudit.csproj" />
-		<ProjectReference Include="..\Server\Server.csproj" />
+		<ProjectReference Include="..\Server\EfAuditServerSample.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using static EfAudit.EntityAudit;
+﻿using static AuditTrail.Common.EntityAudit;
 
 namespace EfAudit
 {

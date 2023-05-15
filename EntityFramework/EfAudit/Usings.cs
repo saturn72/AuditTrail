@@ -1,5 +1,9 @@
-﻿global using System;
+﻿global using AuditTrail.Common;
+global using AuditTrail.Common.Services;
+global using EfAudit;
+global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
-global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using System;

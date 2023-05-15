@@ -1,5 +1,4 @@
-﻿
-namespace EfAudit
+﻿namespace AuditTrail.Common.Services
 {
     public interface IEventBus
     {
