@@ -1,4 +1,5 @@
-﻿using EfAudit;
+﻿using AuditTrail.Common;
+using EfAudit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace NServiceBusSink

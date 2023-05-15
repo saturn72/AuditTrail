@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\EfAudit\EfAudit.csproj" />
+		<ProjectReference Include="..\..\Server\EfAuditServerSample.csproj" />
 		<ProjectReference Include="..\DaprSinks\DaprSinks.csproj" />
 	</ItemGroup>
 

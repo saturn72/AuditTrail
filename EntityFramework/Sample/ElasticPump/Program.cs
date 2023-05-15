@@ -16,4 +16,5 @@ builder.Host.UseNServiceBus(context =>
 
 // Add services to the container.
 var app = builder.Build();
+app.MapGet("/", () => AuditMessageHandler.OnGet());
 app.Run();

@@ -1,4 +1,6 @@
-﻿using EfAudit;
+﻿
+using EfAudit.Extractors;
+using System.Text.Json;
 
 namespace Server.NServiceBus
 {
@@ -7,47 +9,28 @@ namespace Server.NServiceBus
         public static async Task Handle(IServiceProvider services, AuditRecord record, CancellationToken cancellationToken)
         {
             var messageSession = services.GetRequiredService<IMessageSession>();
+            var extractor = services.GetRequiredService<IDataChangedExtractor>();
+            var msg = extractor.Extract(record);
 
-            if (record == null || record.Entities == null || !record.Entities.Any())
-                return;
+            if (msg == default)
+                throw new ArgumentNullException(nameof(msg));
 
-            var l = new List<object>();
-            foreach (var e in record.Entities)
-            {
-                var diff = e.ModifiedProperties.Select(x => new
+            await messageSession.Send<IAuditRecordMessage>(message =>
                 {
-                    attributeName = x.Name,
-                    currentValue = x.CurrentValue,
-                    previousValue = x.OriginalValue,
-                }).ToList();
-
-                var o = new
-                {
-                    action = e.State,
-                    type = e.TypeName,
-                    value = e.Value,
-                    diff
-                };
-                l.Add(o);
-            }
-            if (!l.Any())
-                return;
-
-            var msg = new AuditMessage
-            {
-                Version = "v1",
-                Transaction = new
-                {
-                    success = record.Success,
-                    id = record.Uuid,
-                    startedOnUtc = record.StartedOnUtc,
-                    endedOnUtc = record.EndedOnUtc,
+                    message.Version = msg.Version;
+                    message.Error = msg.Error;
+                    message.Transaction = msg.Transaction;
+                    message.Trail = msg.Trail.Select(x => JsonSerializer.Serialize(x)).ToList();
                 },
-                Error = record.Exception?.InnerException?.Message,
-                Trail = l
-            };
-
-            await messageSession.Send(msg, cancellationToken);
+                cancellationToken);
         }
+    }
+
+    public interface IAuditRecordMessage : IMessage
+    {
+        string? Version { get; set; }
+        string? Error { get; set; }
+        object? Transaction { get; set; }
+        List<string>? Trail { get; set; }
     }
 }

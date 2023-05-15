@@ -1,5 +1,5 @@
-﻿using Dapr.Client;
-using EfAudit;
+﻿using AuditTrail.Common;
+using Dapr.Client;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DaprSinks

@@ -1,22 +1,25 @@
-﻿using Nest;
+﻿using AuditTrail.Common;
+using Microsoft.AspNetCore.Mvc;
+using Nest;
 using NServiceBus;
 using Server.NServiceBus;
+using System.Text.Json;
 
-public class AuditMessageHandler : IHandleMessages<AuditMessage>
+public class AuditMessageHandler : IHandleMessages<IAuditRecordMessage>
 {
     private readonly IServiceProvider _services;
+    private static IAuditRecordMessage? _records ;
 
     public AuditMessageHandler(IServiceProvider services)
     {
         _services = services;
     }
 
-    public Task Handle(AuditMessage eventMessage, IMessageHandlerContext context)
+    public Task Handle(IAuditRecordMessage eventMessage, IMessageHandlerContext context)
     {
-        using var scope = _services.CreateScope();
-        var elastic = scope.ServiceProvider.GetRequiredService<ElasticClient>();
-        
-        //push to elastic
-        throw new NotImplementedException();
+        _records = eventMessage;
+        return Task.CompletedTask;
     }
+
+    public static object OnGet() => new JsonResult(_records ?? default);
 }

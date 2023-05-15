@@ -2,10 +2,9 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Dapr;
-using EfAudit;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Server;
+using AuditTrail.Common;
 
 namespace DaprSinks.Tests
 {

@@ -1,7 +1,5 @@
-
-
-using Dapr;
-using Dapr.Client;
+using Server;
+using Server.Domain;
 
 namespace DaprSinks.Tests
 {

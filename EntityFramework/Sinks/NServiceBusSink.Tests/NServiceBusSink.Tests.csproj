@@ -28,6 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Server\EfAuditServerSample.csproj" />
 	  <ProjectReference Include="..\NServiceBusSink\NServiceBusSink.csproj" />
 	</ItemGroup>
 

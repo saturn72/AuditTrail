@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using AuditTrail.Common;
 
 namespace EfAudit.Tests
 {

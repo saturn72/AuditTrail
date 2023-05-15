@@ -1,6 +1,6 @@
-﻿namespace Server.NServiceBus
+﻿namespace AuditTrail.Common
 {
-    public class AuditMessage : IMessage
+    public class AuditMessage
     {
         public string? Version { get; set; }
         public string? Error { get; set; }

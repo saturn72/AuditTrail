@@ -1,1 +1,2 @@
-﻿global using Microsoft.EntityFrameworkCore;
+﻿global using AuditTrail.Common;
+global using Microsoft.EntityFrameworkCore;

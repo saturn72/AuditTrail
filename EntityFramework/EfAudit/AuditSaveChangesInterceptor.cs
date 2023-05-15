@@ -4,19 +4,20 @@ namespace EfAudit
 {
     public class AuditSaveChangesInterceptor : ISaveChangesInterceptor
     {
-        private const string Added = "added";
         private readonly AuditInterceptorOptions _options;
         private readonly IServiceProvider _services;
         private readonly IEventBus _eventBus;
         private AuditRecord? _record;
         private readonly Dictionary<Guid, object> _trackedEntities = new();
-        private readonly IReadOnlyDictionary<EntityState, string> _stateMap = new Dictionary<EntityState, string>
+        private static readonly IReadOnlyDictionary<EntityState, string> StateToStringMap = new Dictionary<EntityState, string>
         {
-            { EntityState.Added, Added},
+            { EntityState.Added, "added"},
             { EntityState.Modified, "modified" },
             { EntityState.Deleted, "deleted"},
-            { EntityState.Unchanged, "unchanged"}
         };
+        private static readonly string Added = StateToStringMap[EntityState.Added];
+        private static readonly IEnumerable<EntityState> MonitoredStates = StateToStringMap.Keys;
+
 
         public AuditSaveChangesInterceptor(
             IServiceProvider services,
@@ -94,6 +95,7 @@ namespace EfAudit
 
             var record = new AuditRecord();
             var entries = context.ChangeTracker.Entries();
+            var modifiedOrUpdated = entries.Select(x => MonitoredStates.Contains(x.State)).ToList();
             var entities = new List<EntityAudit>();
 
             foreach (var entry in entries)
@@ -109,7 +111,7 @@ namespace EfAudit
             var modified = entry.State == EntityState.Modified ?
                 getModifiedProperties() : null;
 
-            var state = _stateMap[entry.State];
+            var state = StateToStringMap[entry.State];
             var ea = new EntityAudit
             {
                 PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).OriginalValue,

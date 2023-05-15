@@ -1,9 +1,11 @@
 ﻿using System.Text.Json;
 
-namespace AuditTrail.Common
+namespace System
 {
-    public static class ObjectExtensions
+    public static class Extensions
     {
+        public static bool HasNoValue(this string? value) => string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
+
         public static object? Clone(this object obj)
         {
             var t = obj.GetType();

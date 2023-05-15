@@ -1,3 +1,4 @@
+using AuditTrail.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -7,8 +8,8 @@ namespace EfAudit.Tests
     {
         protected List<AuditRecord> Records => new();
 
-        static new Func<IServiceProvider, AuditRecord, CancellationToken, Task>[] handlers = new[] { EfAuditJsonHandler };
-        public FunctionalTests() : base(handlers) { }
+        //static new Func<IServiceProvider, AuditRecord, CancellationToken, Task>[] handlers = new[] { EfAuditJsonHandler };
+        public FunctionalTests() : base(null) { }
         protected Task EfAuditInMemoryHandler(
           IServiceProvider services,
           AuditRecord record,

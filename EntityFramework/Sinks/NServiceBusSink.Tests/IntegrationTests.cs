@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using NServiceBusSink.Tests.Domain;
 using NServiceBus;
 using Moq;
 using EfAudit;
 using NServiceBus.Testing;
 using Shouldly;
+using Server;
 
 namespace NServiceBusSink.Tests
 {

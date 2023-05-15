@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AuditTrail.Common;
+using Microsoft.Extensions.DependencyInjection;
 using NBomber.CSharp;
-using Server;
-using Server.Domain;
 using Shouldly;
 
 namespace EfAudit.Tests
