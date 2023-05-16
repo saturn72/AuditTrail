@@ -18,6 +18,7 @@ namespace EfAudit.Extractors
             }
             if (!atre.Any())
                 return default;
+
             return new AuditMessage
             {
                 Version = "v1",

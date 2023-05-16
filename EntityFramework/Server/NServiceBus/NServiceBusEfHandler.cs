@@ -6,6 +6,13 @@ namespace Server.NServiceBus
 {
     public class NServiceBusEfHandler
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        {
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         public static async Task Handle(IServiceProvider services, AuditRecord record, CancellationToken cancellationToken)
         {
             var messageSession = services.GetRequiredService<IMessageSession>();
@@ -15,22 +22,34 @@ namespace Server.NServiceBus
             if (msg == default)
                 throw new ArgumentNullException(nameof(msg));
 
-            await messageSession.Send<IAuditRecordMessage>(message =>
+            var payloadObject = new
+            {
+                source = msg.Source,
+                subjectId = msg.SubjectId,
+                error = msg.Error,
+                transaction = new
                 {
-                    message.Version = msg.Version;
-                    message.Error = msg.Error;
-                    message.Transaction = msg.Trail;
-                    message.Trail = msg.Trail.Entries?.Select(x => JsonSerializer.Serialize(x)).ToList();
+                    id = msg.TransactionId,
+                    trail = msg?.Trail?.Entries ?? Enumerable.Empty<object>(),
                 },
-                cancellationToken);
+            };
+            var payload = JsonSerializer.Serialize(payloadObject, JsonSerializerOptions);
+
+            var message = new PayloadMessage
+            {
+                Version = msg.Version,
+                Key = "audit-trail",
+                Payload = payload
+            };
+
+            await messageSession.Send(message, cancellationToken);
         }
     }
 
-    public interface IAuditRecordMessage : IMessage
+    public class PayloadMessage : IMessage
     {
-        string? Version { get; set; }
-        string? Error { get; set; }
-        object? Transaction { get; set; }
-        List<string>? Trail { get; set; }
+        public string? Version { get; set; }
+        public string? Key { get; set; }
+        public string? Payload { get; set; }
     }
 }

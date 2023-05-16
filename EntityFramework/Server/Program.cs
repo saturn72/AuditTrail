@@ -15,7 +15,7 @@ builder.Host.UseNServiceBus(context =>
     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
     transport.UseConventionalRoutingTopology(QueueType.Quorum);
     transport.ConnectionString(context.Configuration.GetConnectionString("rabbitMq"));
-    transport.Routing().RouteToEndpoint(typeof(IAuditRecordMessage), destination: "EfAudit");
+    transport.Routing().RouteToEndpoint(typeof(Server.NServiceBus.PayloadMessage), destination: "EfAudit");
 
     endpointConfiguration.EnableInstallers();
     //var endpointInstance = await Endpoint.Start(endpointConfiguration)

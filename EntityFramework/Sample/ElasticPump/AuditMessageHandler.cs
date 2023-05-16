@@ -1,21 +1,18 @@
-﻿using AuditTrail.Common;
-using Microsoft.AspNetCore.Mvc;
-using Nest;
+﻿using Microsoft.AspNetCore.Mvc;
 using NServiceBus;
 using Server.NServiceBus;
-using System.Text.Json;
 
-public class AuditMessageHandler : IHandleMessages<IAuditRecordMessage>
+public class AuditMessageHandler : IHandleMessages<PayloadMessage>
 {
     private readonly IServiceProvider _services;
-    private static IAuditRecordMessage? _records ;
+    private static Server.NServiceBus.PayloadMessage? _records;
 
     public AuditMessageHandler(IServiceProvider services)
     {
         _services = services;
     }
 
-    public Task Handle(IAuditRecordMessage eventMessage, IMessageHandlerContext context)
+    public Task Handle(PayloadMessage eventMessage, IMessageHandlerContext context)
     {
         _records = eventMessage;
         return Task.CompletedTask;
