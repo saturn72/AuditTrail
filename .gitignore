@@ -32,3 +32,4 @@ _ReSharper*/
 packages/
 /EntityFramework/Server/catalog.db-shm
 /EntityFramework/Server/catalog.db-wal
+/EntityFramework/Server/catalog.db
