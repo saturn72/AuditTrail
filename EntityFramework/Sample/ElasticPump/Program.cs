@@ -1,20 +1,23 @@
-using NServiceBus;
+
+using EasyNetQ;
+using Server.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseNServiceBus(context =>
-{
-    var endpointConfiguration = new EndpointConfiguration("EfAudit");
-    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-    transport.UseConventionalRoutingTopology(QueueType.Quorum);
-    transport.ConnectionString(context.Configuration.GetConnectionString("rabbitMq"));
-
-    endpointConfiguration.EnableInstallers();
-
-    return endpointConfiguration;
-});
-
+var rcs = builder.Configuration.GetConnectionString("rabbitMq");
+var bus = RabbitHutch.CreateBus(rcs);
+builder.Services.AddSingleton(bus);
+builder.Services.AddScoped<AuditMessageHandler>();
 // Add services to the container.
 var app = builder.Build();
+ 
+bus.PubSub.Subscribe<PayloadedMessage>("default", msg =>
+{
+    using var scope = app.Services.CreateScope();
+    var ah = scope.ServiceProvider.GetRequiredService<AuditMessageHandler>();
+    ah.Handle(msg);
+});
+app.Lifetime.ApplicationStopping.Register(bus.Dispose);
+
 app.MapGet("/", () => AuditMessageHandler.OnGet());
 app.Run();

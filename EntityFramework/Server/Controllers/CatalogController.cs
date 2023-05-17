@@ -63,6 +63,7 @@ namespace Server.Controllers
                 return BadRequest();
 
             product.Name = newName;
+            product.Price += 10;
 
             await context.SaveChangesAsync();
             return Ok(product);

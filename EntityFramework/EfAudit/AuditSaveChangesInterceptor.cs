@@ -109,10 +109,10 @@ namespace EfAudit
             };
 
             var entries = context.ChangeTracker.Entries();
-            var modifiedOrUpdated = entries.Select(x => MonitoredStates.Contains(x.State)).ToList();
+            var modifiedOrUpdated = entries.Where(x => MonitoredStates.Contains(x.State)).ToList();
             var entities = new List<EntityAudit>();
 
-            foreach (var entry in entries)
+            foreach (var entry in modifiedOrUpdated)
                 entities.Add(ToEntityAudit(entry));
 
             record.Entities = entities;

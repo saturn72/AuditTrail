@@ -1,20 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NServiceBus;
-using Server.NServiceBus;
+using Server.Handlers;
 
-public class AuditMessageHandler : IHandleMessages<PayloadMessage>
+public class AuditMessageHandler
 {
-    private readonly IServiceProvider _services;
-    private static Server.NServiceBus.PayloadMessage? _records;
+    private static PayloadedMessage? _records;
 
-    public AuditMessageHandler(IServiceProvider services)
+    public Task Handle(PayloadedMessage auditMessage)
     {
-        _services = services;
-    }
-
-    public Task Handle(PayloadMessage eventMessage, IMessageHandlerContext context)
-    {
-        _records = eventMessage;
+        //elastic client placed here
+        _records = auditMessage;
         return Task.CompletedTask;
     }
 

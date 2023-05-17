@@ -21,12 +21,13 @@ namespace DaprSinks.Tests
             builder.Services.AddDaprSinks();
 
             builder.Services.AddEfAudit(
+                builder.Configuration,
                 DaprPubSubSink.Handle);
 
             builder.Services.AddDbContext<CatalogContext>((services, options) =>
             {
                 options.UseSqlite("DataSource=catalog.db")
-                .AddAuditInterceptor(services, options => { });
+                .AddAuditInterceptor(services);
             });
 
             App = builder.Build();

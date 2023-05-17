@@ -1,5 +1,6 @@
 ﻿using EfAudit.Extractors;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -29,7 +30,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<AuditInterceptorOptions>(options =>
             {
                 var section = configuration.GetSection(AuditInterceptorOptions.Section);
-                options.Source = section["source"];
+
+                var tmpSource = section["source"];
+                options.Source = tmpSource.HasValue() ? tmpSource : Assembly.GetEntryAssembly()?.GetName().Name;
             });
 
             services.PostConfigure<AuditInterceptorOptions>(options => AuditInterceptorOptionsValidator.Validate(options));

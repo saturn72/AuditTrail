@@ -4,6 +4,7 @@ namespace System
 {
     public static class SystemExtensions
     {
+        public static bool HasValue(this string? value) => !string.IsNullOrEmpty(value) && !string.IsNullOrWhiteSpace(value);
         public static bool HasNoValue(this string? value) => string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
 
         public static object? Clone(this object obj)

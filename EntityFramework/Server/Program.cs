@@ -1,34 +1,26 @@
+using EasyNetQ;
 using EfAudit;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Controllers;
-using Server.NServiceBus;
+using Server.Handlers;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var services = builder.Services;
+
 // Add services to the container.
-builder.Host.UseNServiceBus(context =>
-{
-    var endpointConfiguration = new EndpointConfiguration("EfAudit");
-    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-    transport.UseConventionalRoutingTopology(QueueType.Quorum);
-    transport.ConnectionString(context.Configuration.GetConnectionString("rabbitMq"));
-    transport.Routing().RouteToEndpoint(typeof(Server.NServiceBus.PayloadMessage), destination: "EfAudit");
+var rcs = builder.Configuration.GetConnectionString("rabbitMq");
+var bus = RabbitHutch.CreateBus(rcs);
+services.AddSingleton(bus);
 
-    endpointConfiguration.EnableInstallers();
-    //var endpointInstance = await Endpoint.Start(endpointConfiguration)
-    //        .ConfigureAwait(false);
-    //endpointConfiguration.SendOnly();
 
-    return endpointConfiguration;
-});
-
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
@@ -41,12 +33,12 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddEfAudit(
+services.AddEfAudit(
     builder.Configuration,
     AuditTrailController.AddRecords,
-    NServiceBusEfHandler.Handle
+    RabbitMqEfAuditHandler.Handle
 );
-builder.Services.AddDbContext<CatalogContext>((services, options) =>
+services.AddDbContext<CatalogContext>((services, options) =>
 {
     options.UseSqlite($"DataSource=catalog.db")
     .AddAuditInterceptor(services);
@@ -56,6 +48,8 @@ var app = builder.Build();
 
 //warm up - validate options
 app.Services.GetRequiredService<IOptionsMonitor<AuditInterceptorOptions>>();
+
+app.Lifetime.ApplicationStopping.Register(bus.Dispose);
 
 using var scope = app.Services.CreateScope();
 using (var ctx = scope.ServiceProvider.GetRequiredService<CatalogContext>())

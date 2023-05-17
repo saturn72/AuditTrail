@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EasyNetQ" Version="7.5.2" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="NEST" Version="7.17.5" />
-    <PackageReference Include="NServiceBus.Extensions.Hosting" Version="2.0.0" />
-    <PackageReference Include="NServiceBus.RabbitMQ" Version="8.0.3" />
+    <PackageReference Include="Newtonsoft.JSon" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

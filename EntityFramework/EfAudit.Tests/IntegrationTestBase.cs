@@ -20,12 +20,12 @@ namespace EfAudit.Tests
 
             var builder = WebApplication.CreateBuilder();
 
-            builder.Services.AddEfAudit(handlers);
+            builder.Services.AddEfAudit(builder.Configuration, handlers);
 
             builder.Services.AddDbContext<CatalogContext>((services, options) =>
             {
                 options.UseSqlite($"DataSource=catalog.db")
-                .AddAuditInterceptor(services, options => { });
+                .AddAuditInterceptor(services);
             });
 
             var app = builder.Build();

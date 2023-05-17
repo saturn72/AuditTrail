@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "http": {
+    "ElasticPumpReceiver": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
