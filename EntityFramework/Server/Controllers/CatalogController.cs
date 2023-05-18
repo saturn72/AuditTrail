@@ -7,6 +7,12 @@ namespace Server.Controllers
     [Route("catalog")]
     public class CatalogController : ControllerBase
     {
+        private readonly CatalogContext _dbContext;
+
+        public CatalogController(CatalogContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
         /// <summary>
         /// Creates multiple products
         /// </summary>
@@ -20,9 +26,8 @@ namespace Server.Controllers
             for (var i = 0; i < count; i++)
                 list.Add(new Product { Name = $"product-{Guid.NewGuid()}" });
 
-            using var context = HttpContext.RequestServices.GetRequiredService<CatalogContext>();
-            await context.AddRangeAsync(list);
-            await context.SaveChangesAsync();
+            await _dbContext.Products.AddRangeAsync(list);
+            await _dbContext.SaveChangesAsync();
 
             return Ok(list);
         }
@@ -40,9 +45,8 @@ namespace Server.Controllers
             for (var i = 0; i < count; i++)
                 list.Add(new Category { Name = $"category-{Guid.NewGuid()}" });
 
-            using var context = HttpContext.RequestServices.GetRequiredService<CatalogContext>();
-            await context.AddRangeAsync(list);
-            await context.SaveChangesAsync();
+            await _dbContext.AddRangeAsync(list);
+            await _dbContext.SaveChangesAsync();
 
             return Ok(list);
         }
@@ -57,15 +61,15 @@ namespace Server.Controllers
         [HttpPut("product/{productId}/{newName}")]
         public async Task<IActionResult> AddCategoryToProduct(int productId, string newName)
         {
-            using var context = HttpContext.RequestServices.GetRequiredService<CatalogContext>();
-            var product = await context.FindAsync<Product>(productId);
+
+            var product = await _dbContext.FindAsync<Product>(productId);
             if (product == null)
                 return BadRequest();
 
             product.Name = newName;
             product.Price += 10;
 
-            await context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok(product);
         }
 
@@ -78,18 +82,16 @@ namespace Server.Controllers
         [HttpPut("product/{productId}/addCategory/{categoryId}")]
         public async Task<IActionResult> AddCategoryToProduct(int productId, int categoryId)
         {
-
-            using var context = HttpContext.RequestServices.GetRequiredService<CatalogContext>();
-            var product = await context.FindAsync<Product>(productId);
+            var product = await _dbContext.FindAsync<Product>(productId);
             if (product == null)
                 return BadRequest();
 
-            var category = await context.FindAsync<Category>(categoryId);
+            var category = await _dbContext.FindAsync<Category>(categoryId);
             if (category == null)
                 return BadRequest();
 
             (product.Categories ??= new List<Category>()).Add(category);
-            await context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok(product);
         }
 
@@ -101,14 +103,14 @@ namespace Server.Controllers
         [HttpDelete("{productId}")]
         public async Task<IActionResult> DeleteProduct(int productId)
         {
-            using var context = HttpContext.RequestServices.GetRequiredService<CatalogContext>();
-            var product = await context.FindAsync<Product>(productId);
+
+            var product = await _dbContext.FindAsync<Product>(productId);
             if (product == null)
                 return BadRequest();
 
-            context.Remove(product);
+            _dbContext.Remove(product);
 
-            await context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Ok(product);
         }
     }

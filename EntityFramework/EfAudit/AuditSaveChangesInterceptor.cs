@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
-using System.Text;
 using static AuditTrail.Common.EntityAudit;
 
 namespace EfAudit
@@ -66,6 +66,9 @@ namespace EfAudit
 
         private async Task OnSavedChanges(DbContext? context)
         {
+#warning - remove this one
+            CreateAuditRecord(context);
+
             if (_record == default)
                 throw new InvalidOperationException();
             _record.TransactionId = context.GetCurrentTransactionId();

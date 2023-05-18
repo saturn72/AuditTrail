@@ -30,7 +30,7 @@ namespace Server.Handlers
                 error = msg.Error,
                 transaction = new
                 {
-                    id = msg.TransactionId,
+                    id = msg.ProviderInfo,
                     trail = msg?.Trail?.Entries ?? Enumerable.Empty<object>(),
                 },
             };

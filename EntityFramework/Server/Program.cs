@@ -38,10 +38,12 @@ services.AddEfAudit(
     AuditTrailController.AddRecords,
     RabbitMqEfAuditHandler.Handle
 );
+
 services.AddDbContext<CatalogContext>((services, options) =>
 {
-    options.UseSqlite($"DataSource=catalog.db")
-    .AddAuditInterceptor(services);
+    //    options.UseSqlite($"DataSource=catalog.db")
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddAuditInterceptor(services);
 });
 
 var app = builder.Build();

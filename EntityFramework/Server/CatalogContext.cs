@@ -6,7 +6,9 @@ namespace Server
     {
         public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
         {
+
         }
+        
         public DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,9 +20,7 @@ namespace Server
                 .WithMany();
 
             modelBuilder.Entity<Product>()
-                .Navigation(e => e.Categories).AutoInclude()
-
-            ;
+                .Navigation(e => e.Categories).AutoInclude();
         }
     }
 }

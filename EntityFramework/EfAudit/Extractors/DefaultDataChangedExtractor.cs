@@ -24,7 +24,10 @@ namespace EfAudit.Extractors
                 Version = "v1",
                 SubjectId = record.SubjectId,
                 Source = record.Source,
-                TransactionId = record.TransactionId,
+                ProviderInfo = new
+                {
+                    transactionId = record.TransactionId
+                },
                 Trail = new AuditTrailRecord
                 {
                     Success = record.Success.Value,
