@@ -24,9 +24,9 @@ namespace EfAudit.Extractors
                 Version = "v1",
                 SubjectId = record.SubjectId,
                 Source = record.Source,
-                ProviderInfo = new
+                ProviderInfo = new Dictionary<string, object>
                 {
-                    transactionId = record.TransactionId
+                    { "transactionId", record.TransactionId }
                 },
                 Trail = new AuditTrailRecord
                 {

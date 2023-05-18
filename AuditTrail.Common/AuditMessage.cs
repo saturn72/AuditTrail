@@ -5,7 +5,7 @@
         public string? Version { get; set; }
         public string? Source { get; set; }
         public string? Error { get; set; }
-        public object? ProviderInfo { get; set; }
+        public Dictionary<string, object>? ProviderInfo { get; set; }
         public AuditTrailRecord? Trail { get; set; }
         public string? SubjectId { get; set; }
     }
