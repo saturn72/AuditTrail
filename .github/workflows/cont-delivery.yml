@@ -18,12 +18,12 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 6.0.x
 
       - name: Checkout main branch
         uses: actions/checkout@main
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 6.0.x
 
       # - name: Build Solution
       #   run: dotnet build --configuration Release
@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v2.3.1
         with:
           name: EfAudit for publish
-          path: ./EfAudit/bin/Release/net7.0/publish/
+          path: ./EfAudit/bin/Release/net6.0/publish/
           if-no-files-found: error
 
       - name: pack  nuget package
