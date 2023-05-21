@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using static AuditTrail.Common.EntityAudit;
 
@@ -67,7 +68,12 @@ namespace EfAudit
             if (_record == default)
                 throw new InvalidOperationException();
 
-            _record.TransactionId = context.GetCurrentTransactionId();
+            _record.ProviderInfo = new()
+            {
+                {"transactionId",context.GetCurrentTransactionId()},
+            };
+            _record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
+
             foreach (var e in _record.Entities.Where(x => x.State == Added))
             {
                 var te = _trackedEntities[e.Uuid];

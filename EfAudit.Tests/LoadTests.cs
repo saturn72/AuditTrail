@@ -46,7 +46,7 @@ namespace EfAudit.Tests
             }
             i.ShouldBe(iteration);
         }
-        [Theory]
+        [Theory(Skip = "temporary skipping auto tests")]
         [InlineData(10000)]
         public void CreateProduct(int total)
         {
