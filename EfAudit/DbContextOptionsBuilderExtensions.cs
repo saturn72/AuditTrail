@@ -3,7 +3,7 @@ namespace Microsoft.EntityFrameworkCore
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder AddAuditInterceptor(
+        public static DbContextOptionsBuilder AddEfAuditInterceptor(
             this DbContextOptionsBuilder builder,
             IServiceProvider services)
         {

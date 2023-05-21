@@ -22,7 +22,7 @@ builder.Services.AddDbContext<CatalogContext>((services, options) =>
     //    options.UseSqlite($"DataSource=catalog.db")
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         //add efAuditInterceptor
-        .AddAuditInterceptor(services);
+        .AddEfAuditInterceptor(services);
 });
 
 //configure easynetq (rabbitmq client)
