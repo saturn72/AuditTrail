@@ -6,7 +6,7 @@ namespace Server.Controllers
 {
     [ApiController]
     [Route("audit")]
-    public class AuditTrailController : ControllerBase
+    public class AuditTrailController : ControllerBase, IAuditRecordHandler
     {
         private static readonly List<object> _records = new();
 
@@ -19,7 +19,9 @@ namespace Server.Controllers
         {
             return Ok(_records);
         }
-        public static Task AddRecords(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
+
+        [NonAction]
+        public Task Handle(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
         {
             using var scope = services.CreateScope();
 

@@ -1,18 +1,17 @@
+using AuditTrail.Common;
 using EasyNetQ;
 using EfAudit;
 using Microsoft.Extensions.Options;
 using Server;
 using Server.Controllers;
 using Server.Handlers;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// options 1:
 //add efAudit services.
 // this is an example for using multiple audit handlers
 builder.Services.AddEfAudit(
     builder.Configuration,
-    AuditTrailController.AddRecords, //first audit handler
     RabbitMqEfAuditHandler.Handle // second audit handler
 );
 
@@ -25,6 +24,13 @@ builder.Services.AddDbContext<CatalogContext>((services, options) =>
         .AddEfAuditInterceptor(services);
 });
 
+
+//options 2: use dependency registrar
+builder.Services.AddTransient<IAuditRecordHandler, AuditTrailController>();
+
+//options 2: you may not explicit define the type
+builder.Services.AddTransient<YetAnotherAuditRecordHandler>();
+
 //configure easynetq (rabbitmq client)
 var rcs = builder.Configuration.GetConnectionString("rabbitMq");
 var bus = RabbitHutch.CreateBus(rcs);
@@ -32,8 +38,12 @@ builder.Services.AddSingleton(bus);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//options2: if you registered your handler using dependency injection - this line is required 
+app.UseEfAudit();
 
 //warm up - validate options(optional)
 app.Services.GetRequiredService<IOptionsMonitor<AuditInterceptorOptions>>();
@@ -54,7 +64,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
