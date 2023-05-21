@@ -30,6 +30,7 @@ _ReSharper*/
 .vs/
 #Nuget packages folder
 packages/
-/EntityFramework/Server/catalog.db-shm
-/EntityFramework/Server/catalog.db-wal
-/EntityFramework/Server/catalog.db
+catalog.db-shm
+catalog.db-wal
+catalog.db
+nupkg/

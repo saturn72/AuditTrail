@@ -1,0 +1,52 @@
+name: EfAudit ci
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  continunous_delivery:
+    name: build, test & deploy
+
+    defaults:
+      run:
+        working-directory: ./
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Checkout main branch
+        uses: actions/checkout@main
+        with:
+          dotnet-version: 7.0.x
+
+      # - name: Build Solution
+      #   run: dotnet build --configuration Release
+
+      - name: Test 
+        run: dotnet test ./EfAudit.Tests/EfAudit.Tests.csproj --verbosity normal --configuration Release /p:CollectCoverage=true
+
+      - name: Publish
+        run: dotnet publish ./EfAudit/EfAudit.csproj --configuration Release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: EfAudit for publish
+          path: ./EfAudit/bin/Release/net7.0/publish/
+          if-no-files-found: error
+
+      - name: pack  nuget package
+        working-directory: ./
+        run: dotnet pack ./EfAudit/EfAudit.csproj --configuration Release --output ./nupkg --include-symbols  --include-source -p:SymbolPackageFormat=snupkg 
+
+      - name: Push packages to nuget
+        working-directory: ./nupkg
+        run: dotnet nuget push *.nupkg --api-key $nuget_api_key --source https://api.nuget.org/v3/index.json
+        env:
+          nuget_api_key: ${{secrets.NUGET_DEPLOY_KEY}}
