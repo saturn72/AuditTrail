@@ -1,2 +1,2 @@
-# AuditTrail
-Multiple `AuditTrail` solutions to be used in `C#`
+# EfAuditTrail
+`Entity Framework` AuditTrail solution in your `C#` project
