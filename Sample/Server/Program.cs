@@ -1,7 +1,6 @@
 using EasyNetQ;
 using EfAudit;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Server;
 using Server.Controllers;
 using Server.Handlers;
@@ -20,19 +19,6 @@ services.AddSingleton(bus);
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Catalog API",
-    });
-
-    // using System.Reflection;
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
 services.
     AddEfAudit(
     builder.Configuration,
