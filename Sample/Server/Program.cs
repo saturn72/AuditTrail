@@ -8,30 +8,25 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var services = builder.Services;
+builder.Services.AddDbContext<CatalogContext>((services, options) =>
+{
+    //    options.UseSqlite($"DataSource=catalog.db")
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddAuditInterceptor(services);
+});
 
-// Add services to the container.
 var rcs = builder.Configuration.GetConnectionString("rabbitMq");
 var bus = RabbitHutch.CreateBus(rcs);
-services.AddSingleton(bus);
-
-
-services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-services.AddEndpointsApiExplorer();
-services.
+builder.Services.AddSingleton(bus);
+builder.Services.
     AddEfAudit(
     builder.Configuration,
     AuditTrailController.AddRecords,
     RabbitMqEfAuditHandler.Handle
 );
 
-services.AddDbContext<CatalogContext>((services, options) =>
-{
-    //    options.UseSqlite($"DataSource=catalog.db")
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .AddAuditInterceptor(services);
-});
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
