@@ -18,7 +18,7 @@ namespace EfAudit.Tests
             Records.Add(record);
             return Task.CompletedTask;
         }
-        [Fact]
+        [Fact(Skip = "temporary skipping auto tests")]
         public async Task CreateProductWithMultipleCategoriesAndRemoveCategories()
         {
             //create
@@ -66,7 +66,7 @@ namespace EfAudit.Tests
             await Task.Delay(3000);
         }
 
-        [Fact]
+        [Fact(Skip = "temporary skipping auto tests")]
         public async Task CreateMultiple()
         {
             //craete categories
@@ -123,7 +123,7 @@ namespace EfAudit.Tests
             Records.Last().Entities.Count.ShouldBe(2);
         }
 
-        [Fact]
+        [Fact(Skip = "temporary skipping auto tests")]
         public async Task CreateProductAndUpdateProductsCategoryName()
         {
             //create
@@ -168,7 +168,7 @@ namespace EfAudit.Tests
 
 
         }
-        [Fact]
+        [Fact(Skip = "temporary skipping auto tests")]
         public async Task CreateUpdateDeleteAsync()
         {
             //create

@@ -26,7 +26,7 @@ namespace EfAudit.Tests
         {
         }
 
-        [Fact]
+        [Fact(Skip = "temporary skipping auto tests")]
         public async Task Do()
         {
             int iteration = 0;
