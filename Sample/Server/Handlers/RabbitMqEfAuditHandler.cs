@@ -26,9 +26,10 @@ namespace Server.Handlers
 
             var payloadObject = new
             {
+                error = msg.Error,
                 source = msg.Source,
                 subjectId = msg.SubjectId,
-                error = msg.Error,
+                traceId = msg.TraceId,
                 transaction = new
                 {
                     id = msg.ProviderInfo["transactionId"],

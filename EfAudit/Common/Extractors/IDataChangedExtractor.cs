@@ -1,6 +1,4 @@
-﻿using AuditTrail.Common;
-
-namespace EfAudit.Common.Extractors
+﻿namespace EfAudit.Common.Extractors
 {
     public interface IDataChangedExtractor
     {

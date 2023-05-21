@@ -8,6 +8,7 @@
         public Dictionary<string, object>? ProviderInfo { get; set; }
         public AuditTrailRecord? Trail { get; set; }
         public string? SubjectId { get; set; }
+        public object? TraceId { get; set; }
     }
     public class AuditTrailRecord
     {
