@@ -25,8 +25,8 @@ namespace Server.Controllers
         {
             using var scope = services.CreateScope();
 
-            var e = scope.ServiceProvider.GetRequiredService<IDataChangedExtractor>();
-            var r = e.Extract(auditRecord);
+            var e = scope.ServiceProvider.GetRequiredService<IAuditRecordToAuditMessageMapper>();
+            var r = e.Map(auditRecord);
 
             if (r != null)
                 _records.Add(r);

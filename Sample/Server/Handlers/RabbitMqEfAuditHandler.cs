@@ -18,8 +18,8 @@ namespace Server.Handlers
         public static async Task Handle(IServiceProvider services, AuditRecord record, CancellationToken cancellationToken)
         {
             var bus = services.GetRequiredService<IBus>();
-            var extractor = services.GetRequiredService<IDataChangedExtractor>();
-            var msg = extractor.Extract(record);
+            var extractor = services.GetRequiredService<IAuditRecordToAuditMessageMapper>();
+            var msg = extractor.Map(record);
 
             if (msg == default)
                 throw new ArgumentNullException(nameof(msg));

@@ -1,7 +1,7 @@
 ﻿namespace EfAudit.Common.Extractors
 {
-    public interface IDataChangedExtractor
+    public interface IAuditRecordToAuditMessageMapper
     {
-        AuditMessage? Extract(AuditRecord record);
+        AuditMessage? Map(AuditRecord record);
     }
 }

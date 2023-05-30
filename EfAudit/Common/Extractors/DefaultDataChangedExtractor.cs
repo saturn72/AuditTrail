@@ -1,11 +1,10 @@
-﻿using AuditTrail.Common;
-using static AuditTrail.Common.AuditTrailRecord;
+﻿using static AuditTrail.Common.AuditTrailRecord;
 
 namespace EfAudit.Common.Extractors
 {
-    public class DefaultDataChangedExtractor : IDataChangedExtractor
+    public class DefaultAuditRecordToAuditMessageMapper : IAuditRecordToAuditMessageMapper
     {
-        public AuditMessage? Extract(AuditRecord record)
+        public AuditMessage? Map(AuditRecord record)
         {
             if (record == null || record.Entities == null || !record.Entities.Any())
                 return default;

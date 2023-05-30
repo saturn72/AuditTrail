@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration,
             params Func<IServiceProvider, AuditRecord, CancellationToken, Task>[] handlers)
-        => AddEfAudit(services, configuration, typeof(DefaultDataChangedExtractor), handlers);
+        => AddEfAudit(services, configuration, typeof(DefaultAuditRecordToAuditMessageMapper), handlers);
 
         public static IServiceCollection AddEfAudit(
             this IServiceCollection services,
@@ -18,12 +18,12 @@ namespace Microsoft.Extensions.DependencyInjection
             Type dataChangedExtractorType,
             params Func<IServiceProvider, AuditRecord, CancellationToken, Task>[] handlers)
         {
-            if (!typeof(IDataChangedExtractor).IsAssignableFrom(dataChangedExtractorType))
-                throw new InvalidOperationException($"The provided type \'{dataChangedExtractorType.FullName}\' is not of type {nameof(IDataChangedExtractor)}");
+            if (!typeof(IAuditRecordToAuditMessageMapper).IsAssignableFrom(dataChangedExtractorType))
+                throw new InvalidOperationException($"The provided type \'{dataChangedExtractorType.FullName}\' is not of type {nameof(IAuditRecordToAuditMessageMapper)}");
 
-            services.TryAddSingleton(typeof(IDataChangedExtractor), dataChangedExtractorType);
+            services.TryAddSingleton(typeof(IAuditRecordToAuditMessageMapper), dataChangedExtractorType);
 
-            if (typeof(DefaultDataChangedExtractor).IsAssignableFrom(dataChangedExtractorType))
+            if (typeof(DefaultAuditRecordToAuditMessageMapper).IsAssignableFrom(dataChangedExtractorType))
                 services.AddHttpContextAccessor();
 
             services.AddScoped<AuditSaveChangesInterceptor>();
