@@ -70,7 +70,8 @@ namespace EfAudit
 
             _record.ProviderInfo = new()
             {
-                {"transactionId",context.GetCurrentTransactionId()},
+                {"provider",context.Database.ProviderName},
+                {"transactionId",context.Database?.CurrentTransaction?.TransactionId.ToString() ?? default},
             };
             _record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
 

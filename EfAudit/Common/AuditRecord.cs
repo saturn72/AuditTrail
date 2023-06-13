@@ -10,7 +10,7 @@
         public Exception? Exception { get; set; }
         public IReadOnlyCollection<EntityAudit>? Entities { get; set; }
         public object? TraceId { get; set; }
-        public Dictionary<string, object>? ProviderInfo { get; set; }
+        public Dictionary<string, object?>? ProviderInfo { get; set; }
 
         public string? Source { get; set; }
     }
