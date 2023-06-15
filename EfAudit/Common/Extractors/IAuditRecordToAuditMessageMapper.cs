@@ -2,6 +2,6 @@
 {
     public interface IAuditRecordToAuditMessageMapper
     {
-        AuditMessage? Map(AuditRecord record);
+        Task<AuditMessage?> Map(AuditRecord record);
     }
 }

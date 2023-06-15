@@ -21,17 +21,15 @@ namespace Server.Controllers
         }
 
         [NonAction]
-        public Task Handle(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
+        public async Task Handle(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
         {
             using var scope = services.CreateScope();
 
-            var e = scope.ServiceProvider.GetRequiredService<IAuditRecordToAuditMessageMapper>();
-            var r = e.Map(auditRecord);
+            var mapper = scope.ServiceProvider.GetRequiredService<IAuditRecordToAuditMessageMapper>();
+            var r = await mapper.Map(auditRecord);
 
             if (r != null)
                 _records.Add(r);
-
-            return Task.CompletedTask;
         }
     }
 }

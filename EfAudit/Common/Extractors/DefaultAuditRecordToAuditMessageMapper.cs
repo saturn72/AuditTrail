@@ -4,7 +4,7 @@ namespace EfAudit.Common.Extractors
 {
     public class DefaultAuditRecordToAuditMessageMapper : IAuditRecordToAuditMessageMapper
     {
-        public AuditMessage? Map(AuditRecord record)
+        public Task<AuditMessage?> Map(AuditRecord record)
         {
             if (record == null || record.Entities == null || !record.Entities.Any())
                 return default;
@@ -19,7 +19,7 @@ namespace EfAudit.Common.Extractors
             if (!atre.Any())
                 return default;
 
-            return new AuditMessage
+            var msg = new AuditMessage
             {
                 Version = "v1",
                 SubjectId = record.SubjectId,
@@ -36,6 +36,8 @@ namespace EfAudit.Common.Extractors
                 },
                 Error = record.Exception?.InnerException?.Message,
             };
+
+            return Task.FromResult(msg);
 
             IEnumerable<AuditTrailRecordEntryDiff> getDiff(EntityAudit entry)
             {
