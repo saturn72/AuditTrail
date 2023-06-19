@@ -4,7 +4,7 @@ namespace EfAudit.Common.Extractors
 {
     public class DefaultAuditRecordToAuditMessageMapper : IAuditRecordToAuditMessageMapper
     {
-        public Task<AuditMessage?> Map(AuditRecord record)
+        public Task<AuditMessage?> MapAsync(AuditRecord record)
         {
             if (record == null || record.Entities == null || !record.Entities.Any())
                 return default;

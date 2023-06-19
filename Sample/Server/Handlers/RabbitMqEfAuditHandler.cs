@@ -19,7 +19,7 @@ namespace Server.Handlers
         {
             var bus = services.GetRequiredService<IBus>();
             var mapper = services.GetRequiredService<IAuditRecordToAuditMessageMapper>();
-            var msg = await mapper.Map(record);
+            var msg = await mapper.MapAsync(record);
 
             if (msg == default)
                 throw new ArgumentNullException(nameof(msg));

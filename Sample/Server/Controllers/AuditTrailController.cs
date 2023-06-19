@@ -26,7 +26,7 @@ namespace Server.Controllers
             using var scope = services.CreateScope();
 
             var mapper = scope.ServiceProvider.GetRequiredService<IAuditRecordToAuditMessageMapper>();
-            var r = await mapper.Map(auditRecord);
+            var r = await mapper.MapAsync(auditRecord);
 
             if (r != null)
                 _records.Add(r);
