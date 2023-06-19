@@ -30,6 +30,7 @@
         public class AuditTrailRecordEntryDiff
         {
             public string? AttributeName { get; set; }
+            public string? AttributeType { get; set; }
             public object? CurrentValue { get; set; }
             public object? PreviousValue { get; set; }
         }

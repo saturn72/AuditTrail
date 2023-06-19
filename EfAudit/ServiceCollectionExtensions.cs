@@ -15,15 +15,15 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddEfAudit(
             this IServiceCollection services,
             IConfiguration configuration,
-            Type dataChangedExtractorType,
+            Type mapperType,
             params Func<IServiceProvider, AuditRecord, CancellationToken, Task>[] handlers)
         {
-            if (!typeof(IAuditRecordToAuditMessageMapper).IsAssignableFrom(dataChangedExtractorType))
-                throw new InvalidOperationException($"The provided type \'{dataChangedExtractorType.FullName}\' is not of type {nameof(IAuditRecordToAuditMessageMapper)}");
+            if (!typeof(IAuditRecordToAuditMessageMapper).IsAssignableFrom(mapperType))
+                throw new InvalidOperationException($"The provided type \'{mapperType.FullName}\' is not of type {nameof(IAuditRecordToAuditMessageMapper)}");
 
-            services.TryAddSingleton(typeof(IAuditRecordToAuditMessageMapper), dataChangedExtractorType);
+            services.TryAddSingleton(typeof(IAuditRecordToAuditMessageMapper), mapperType);
 
-            if (typeof(DefaultAuditRecordToAuditMessageMapper).IsAssignableFrom(dataChangedExtractorType))
+            if (typeof(DefaultAuditRecordToAuditMessageMapper).IsAssignableFrom(mapperType))
                 services.AddHttpContextAccessor();
 
             services.AddScoped<AuditSaveChangesInterceptor>();

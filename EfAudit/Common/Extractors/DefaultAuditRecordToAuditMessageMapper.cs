@@ -44,6 +44,7 @@ namespace EfAudit.Common.Extractors
                 return entry.ModifiedProperties?.Select(x => new AuditTrailRecordEntryDiff
                 {
                     AttributeName = x.Name,
+                    AttributeType = x.Type.Name.ToLower(),
                     CurrentValue = x.CurrentValue,
                     PreviousValue = x.OriginalValue,
                 })?.ToList()
