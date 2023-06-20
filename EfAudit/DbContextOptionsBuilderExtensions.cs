@@ -12,7 +12,8 @@ namespace Microsoft.EntityFrameworkCore
             if (!DependencyManager.WasInitialized)
                 DependencyManager.Init(services);
 
-            builder.AddInterceptors(services.GetRequiredService<AuditSaveChangesInterceptor>());
+            using var scope = services.CreateScope();
+            builder.AddInterceptors(scope.ServiceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
 
             return builder;
         }
