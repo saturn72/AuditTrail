@@ -42,6 +42,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// optional - validate EfAudit interceptor was added
 app.Services.ValidateEfAudit();
 
 //warm up - validate options(optional)
