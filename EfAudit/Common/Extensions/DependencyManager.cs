@@ -2,28 +2,43 @@ namespace EfAudit.Extensions
 {
     internal class DependencyManager
     {
-        internal static void SubscribeAllEfAuditRecordHandlers(IServiceProvider services)
+        internal static bool WasInitialized { get; private set; }
+        private static object lockObj = new();
+        internal static void Init(IServiceProvider services)
         {
-            var eb = services.GetRequiredService<IEventBus>();
-            using var scope = services.CreateScope();
-            //these were registered as `IAuditRecordHandler` type
-            var regAsARH = scope.ServiceProvider.GetServices<IAuditRecordHandler>().ToList();
-            foreach (var h in regAsARH)
+            lock (lockObj)
             {
-                var hw = new HandlerWarpper(h.GetType(), true);
-                eb.Subscribe(hw.Handle, h.Name);
-            }
+                if (WasInitialized)
+                    throw new InvalidOperationException($"{nameof(DependencyManager.Init)} can be executed only once.");
 
-            var arhType = typeof(IAuditRecordHandler);
-            //these were registered explicitly
-            var exp = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-                .Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && arhType.IsAssignableFrom(t))
-                .Where(t => regAsARH.Any(x => x.GetType() != t)).ToList();
+                var eb = services.GetRequiredService<IEventBus>();
+                using var scope = services.CreateScope();
+                //these were registered as `IAuditRecordHandler` type
+                var regAsARH = scope.ServiceProvider.GetServices<IAuditRecordHandler>().ToList();
+                foreach (var h in regAsARH)
+                {
+                    var hw = new HandlerWarpper(h.GetType(), true);
+                    eb.Subscribe(hw.Handle, h.Name);
+                }
 
-            foreach (var expType in exp)
-            {
-                var hw = new HandlerWarpper(expType, false);
-                eb.Subscribe(hw.Handle);
+                var arhType = typeof(IAuditRecordHandler);
+                //these were registered explicitly
+                var exp = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+                    .Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && arhType.IsAssignableFrom(t))
+                    .Where(t => regAsARH.Any(x => x.GetType() != t)).ToList();
+
+                foreach (var expType in exp)
+                {
+                    var hw = new HandlerWarpper(expType, false);
+                    eb.Subscribe(hw.Handle);
+                }
+                if ((exp == null || !exp.Any()) && (regAsARH == null || !regAsARH.Any()))
+                {
+                    var logger = services.GetRequiredService<ILogger<DependencyManager>>();
+                    logger.LogWarning("No interceptors were found!");
+                }
+
+                WasInitialized = true;
             }
         }
         public sealed class HandlerWarpper

@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.Hosting
     {
         public static void UseEfAuditToHost(this IHost host)
         {
-            DependencyManager.SubscribeAllEfAuditRecordHandlers(host.Services);
+            DependencyManager.Init(host.Services);
         }
     }
 }

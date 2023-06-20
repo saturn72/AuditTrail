@@ -42,8 +42,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//options2: if you registered your handler using dependency injection - this line is required 
-app.UseEfAudit();
+app.Services.ValidateEfAudit();
 
 //warm up - validate options(optional)
 app.Services.GetRequiredService<IOptionsMonitor<AuditInterceptorOptions>>();
@@ -68,3 +67,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+public partial class Program { }
