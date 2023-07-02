@@ -7,6 +7,7 @@ namespace EfAudit
 {
     public class AuditSaveChangesInterceptor : ISaveChangesInterceptor
     {
+        protected static readonly Type ManyToManyType = typeof(IDictionary<string, object>);
         private readonly IOptionsMonitor<AuditInterceptorOptions> _options;
         private readonly IEventBus _eventBus;
         private readonly IHttpContextAccessor _accessor;
@@ -136,13 +137,25 @@ namespace EfAudit
                 PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).OriginalValue,
                 State = state,
                 TypeName = entry.Metadata.ShortName(),
-                Value = entry.CurrentValues.Clone().ToObject(),
+                Value = toObject(),
                 ModifiedProperties = modified ?? Array.Empty<ModifiedProperty>(),
             };
             _trackedEntities[ea.Uuid] = entry;
 
             return ea;
 
+            object toObject()
+            {
+                var clrType = entry.Metadata.ClrType;
+                if (ManyToManyType.IsAssignableFrom(clrType))
+                    return entry.CurrentValues.Clone().ToObject();
+
+                var obj = Activator.CreateInstance(clrType);
+
+                foreach (var p in entry.Properties)
+                    p.Metadata.PropertyInfo.SetValue(obj, p.CurrentValue ?? default);
+                return obj;
+            }
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
                 var m = entry.Properties.Where(p => p.IsModified && !p.CurrentValue.Equals(p.OriginalValue));
