@@ -144,7 +144,6 @@ namespace EfAudit
 
             return ea;
 
-
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
                 var m = entry.Properties.Where(p => p.IsModified && !p.CurrentValue.Equals(p.OriginalValue));
@@ -158,6 +157,7 @@ namespace EfAudit
                     }).ToList();
             }
         }
+
         private object ToObject(EntityEntry entry)
         {
             var clrType = entry.Metadata.ClrType;
@@ -165,9 +165,9 @@ namespace EfAudit
                 return entry.CurrentValues.Clone().ToObject();
 
             var obj = Activator.CreateInstance(clrType);
-
             foreach (var p in entry.Properties)
-                p.Metadata.PropertyInfo.SetValue(obj, p.CurrentValue ?? default);
+                p.Metadata.FieldInfo.SetValue(obj, p.CurrentValue ?? default);
+
             return obj;
         }
     }
