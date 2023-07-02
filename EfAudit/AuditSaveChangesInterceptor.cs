@@ -136,7 +136,7 @@ namespace EfAudit
                 PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).OriginalValue,
                 State = state,
                 TypeName = entry.Metadata.ShortName(),
-                Value = entry.Entity.Clone(),
+                Value = entry.CurrentValues.Clone().ToObject(),
                 ModifiedProperties = modified ?? Array.Empty<ModifiedProperty>(),
             };
             _trackedEntities[ea.Uuid] = entry;
