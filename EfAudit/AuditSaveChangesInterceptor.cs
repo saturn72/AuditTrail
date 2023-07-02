@@ -137,25 +137,14 @@ namespace EfAudit
                 PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).OriginalValue,
                 State = state,
                 TypeName = entry.Metadata.ShortName(),
-                Value = toObject(),
+                Value = ToObject(entry),
                 ModifiedProperties = modified ?? Array.Empty<ModifiedProperty>(),
             };
             _trackedEntities[ea.Uuid] = entry;
 
             return ea;
 
-            object toObject()
-            {
-                var clrType = entry.Metadata.ClrType;
-                if (ManyToManyType.IsAssignableFrom(clrType))
-                    return entry.CurrentValues.Clone().ToObject();
 
-                var obj = Activator.CreateInstance(clrType);
-
-                foreach (var p in entry.Properties)
-                    p.Metadata.PropertyInfo.SetValue(obj, p.CurrentValue ?? default);
-                return obj;
-            }
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
                 var m = entry.Properties.Where(p => p.IsModified && !p.CurrentValue.Equals(p.OriginalValue));
@@ -168,6 +157,18 @@ namespace EfAudit
                         Type = c.Metadata.ClrType,
                     }).ToList();
             }
+        }
+        private object ToObject(EntityEntry entry)
+        {
+            var clrType = entry.Metadata.ClrType;
+            if (ManyToManyType.IsAssignableFrom(clrType))
+                return entry.CurrentValues.Clone().ToObject();
+
+            var obj = Activator.CreateInstance(clrType);
+
+            foreach (var p in entry.Properties)
+                p.Metadata.PropertyInfo.SetValue(obj, p.CurrentValue ?? default);
+            return obj;
         }
     }
 }
