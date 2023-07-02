@@ -78,9 +78,9 @@ namespace EfAudit
 
             foreach (var e in _record.Entities.Where(x => x.State == Added))
             {
-                var te = _trackedEntities[e.Uuid];
-                e.PrimaryKeyValue = te.Properties.First(p => p.Metadata.IsPrimaryKey()).CurrentValue;
-                e.Value = te.Entity.Clone();
+                var entry = _trackedEntities[e.Uuid];
+                e.PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).CurrentValue;
+                e.Value = ToClrInstance(entry);
             }
             _record.Success = true;
             _record.EndedOnUtc = DateTimeOffset.UtcNow.DateTime;
@@ -131,18 +131,18 @@ namespace EfAudit
                 getModifiedProperties() : null;
 
             var state = StateToStringMap[entry.State];
-
             var ea = new EntityAudit
             {
                 PrimaryKeyValue = entry.Properties.First(p => p.Metadata.IsPrimaryKey()).OriginalValue,
                 State = state,
                 TypeName = entry.Metadata.ShortName(),
-                Value = ToObject(entry),
+                Value = ToClrInstance(entry),
                 ModifiedProperties = modified ?? Array.Empty<ModifiedProperty>(),
             };
             _trackedEntities[ea.Uuid] = entry;
 
             return ea;
+
 
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
@@ -158,21 +158,15 @@ namespace EfAudit
             }
         }
 
-        private object ToObject(EntityEntry entry)
+        private object ToClrInstance(EntityEntry entry)
         {
             var clrType = entry.Metadata.ClrType;
             if (ManyToManyType.IsAssignableFrom(clrType))
                 return entry.CurrentValues.Clone().ToObject();
 
-            var obj = Activator.CreateInstance(clrType);
-            foreach (var p in entry.Properties)
-            {
-                var fi = p.Metadata.FieldInfo;
-                if (fi == default)
-                    continue;
-                fi.SetValue(obj, p.CurrentValue ?? default);
-            }
-            return obj;
+            var value = Activator.CreateInstance(clrType);
+            entry.CurrentValues.SetValues(value);
+            return value;
         }
     }
 }
