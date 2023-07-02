@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>EfAudit</PackageId>
-    <PackageVersion>1.0.20</PackageVersion>
+    <PackageVersion>1.0.21</PackageVersion>
     <Authors>roi@saturn72.com</Authors>
     <Company>saturn technologies</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

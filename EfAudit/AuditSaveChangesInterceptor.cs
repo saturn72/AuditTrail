@@ -165,7 +165,13 @@ namespace EfAudit
                 return entry.CurrentValues.Clone().ToObject();
 
             var value = Activator.CreateInstance(clrType);
-            entry.CurrentValues.SetValues(value);
+            foreach (var p in entry.Properties)
+            {
+                var fi = p.Metadata.FieldInfo;
+                if (fi == default)
+                    continue;
+                fi.SetValue(value, p.CurrentValue ?? default);
+            }
             return value;
         }
     }
