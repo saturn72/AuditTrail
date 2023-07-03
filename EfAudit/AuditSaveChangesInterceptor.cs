@@ -101,7 +101,7 @@ namespace EfAudit
         {
             context.ChangeTracker.DetectChanges();
 
-            var record = new AuditRecord
+            _record = new AuditRecord
             {
                 SubjectId = _accessor.GetSubjectId(),
                 Source = _options.CurrentValue.Source
@@ -114,14 +114,14 @@ namespace EfAudit
             foreach (var entry in modifiedOrUpdated)
                 entities.Add(ToEntityAudit(entry));
 
-            record.Entities = entities;
+            _record.Entities = entities;
 
-            _record.ProviderInfo = new()
+            this._record.ProviderInfo = new()
             {
-                {"provider",context.Database.ProviderName},
-                {"transactionId",context.Database?.CurrentTransaction?.TransactionId.ToString() ?? default},
+                {"provider", context.Database.ProviderName},
+                {"transactionId", context.Database?.CurrentTransaction?.TransactionId.ToString() ?? default},
             };
-            _record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
+            this._record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
         }
 
         private EntityAudit ToEntityAudit(EntityEntry entry)
