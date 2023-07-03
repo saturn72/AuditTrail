@@ -38,14 +38,14 @@ namespace EfAudit
             InterceptionResult<int> result,
             CancellationToken cancellationToken = default)
         {
-            _record = CreateAuditRecord(eventData.Context);
+            OnSavingChanges(eventData.Context);
             return ValueTask.FromResult(result);
         }
         public InterceptionResult<int> SavingChanges(
             DbContextEventData eventData,
             InterceptionResult<int> result)
         {
-            _record = CreateAuditRecord(eventData.Context);
+            OnSavingChanges(eventData.Context);
             return result;
         }
 
@@ -68,13 +68,6 @@ namespace EfAudit
         {
             if (_record == default)
                 throw new InvalidOperationException();
-
-            _record.ProviderInfo = new()
-            {
-                {"provider",context.Database.ProviderName},
-                {"transactionId",context.Database?.CurrentTransaction?.TransactionId.ToString() ?? default},
-            };
-            _record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
 
             foreach (var e in _record.Entities.Where(x => x.State == Added))
             {
@@ -104,7 +97,7 @@ namespace EfAudit
             await _eventBus.PublishAsync(_record);
         }
 
-        private AuditRecord CreateAuditRecord(DbContext context)
+        private void OnSavingChanges(DbContext context)
         {
             context.ChangeTracker.DetectChanges();
 
@@ -122,7 +115,13 @@ namespace EfAudit
                 entities.Add(ToEntityAudit(entry));
 
             record.Entities = entities;
-            return record;
+
+            _record.ProviderInfo = new()
+            {
+                {"provider",context.Database.ProviderName},
+                {"transactionId",context.Database?.CurrentTransaction?.TransactionId.ToString() ?? default},
+            };
+            _record.TraceId = Activity.Current?.Id ?? _accessor.HttpContext?.TraceIdentifier;
         }
 
         private EntityAudit ToEntityAudit(EntityEntry entry)
