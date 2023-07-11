@@ -7,12 +7,14 @@ using Server.Controllers;
 using Server.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // options 1:
 //add efAudit services.
 // this is an example for using multiple audit handlers
 builder.Services.AddEfAudit(
     builder.Configuration,
-    RabbitMqEfAuditHandler.Handle // second audit handler
+    RabbitMqEfAuditHandler.Handle
+// second audit handler
 );
 
 //register EF DbContext

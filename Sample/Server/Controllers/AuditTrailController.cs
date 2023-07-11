@@ -10,16 +10,6 @@ namespace Server.Controllers
     {
         private static readonly List<object> _records = new();
 
-        /// <summary>
-        /// Gets all audittrail records
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public IActionResult GetAllRecords()
-        {
-            return Ok(_records);
-        }
-
         [NonAction]
         public async Task Handle(IServiceProvider services, AuditRecord auditRecord, CancellationToken cancellationToken)
         {
@@ -31,5 +21,17 @@ namespace Server.Controllers
             if (r != null)
                 _records.Add(r);
         }
+
+
+        /// <summary>
+        /// Gets all audittrail records
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetAllRecords()
+        {
+            return Ok(_records);
+        }
+
     }
 }

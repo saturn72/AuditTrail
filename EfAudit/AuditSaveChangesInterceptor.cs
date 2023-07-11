@@ -69,6 +69,9 @@ namespace EfAudit
             if (_record == default)
                 throw new InvalidOperationException();
 
+            if (_record.Entities == default || !_record.Entities.Any())
+                return;
+
             foreach (var e in _record.Entities.Where(x => x.State == Added))
             {
                 var entry = _trackedEntities[e.Uuid];

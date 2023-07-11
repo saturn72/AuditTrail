@@ -15,7 +15,6 @@ namespace Microsoft.AspNetCore.Http
         {
             if (httpContext == default)
                 return default;
-
             return httpContext.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         }
     }
