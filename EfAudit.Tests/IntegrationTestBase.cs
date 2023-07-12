@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using AuditTrail.Common;
+using EfAudit.Common.Mappers;
 
 namespace EfAudit.Tests
 {
@@ -20,7 +21,9 @@ namespace EfAudit.Tests
 
             var builder = WebApplication.CreateBuilder();
 
-            builder.Services.AddEfAudit(builder.Configuration, handlers);
+            builder.Services.AddSingleton<IAuditRecordToAuditMessageMapper, DefaultAuditRecordToAuditMessageMapper>();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddEfAuditCore(builder.Configuration, handlers);
 
             builder.Services.AddDbContext<CatalogContext>((serviceProvider, options) =>
             {

@@ -11,11 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // options 1:
 //add efAudit services.
 // this is an example for using multiple audit handlers
-builder.Services.AddEfAudit(
-    builder.Configuration,
-    RabbitMqEfAuditHandler.Handle
-// second audit handler
-);
+builder.Services.AddEfAudit<RabbitMqEfAuditHandler>(builder.Configuration);
 
 //register EF DbContext
 builder.Services.AddDbContext<CatalogContext>((services, options) =>
@@ -48,7 +44,7 @@ var app = builder.Build();
 app.Services.ValidateEfAudit();
 
 //warm up - validate options(optional)
-app.Services.GetRequiredService<IOptionsMonitor<AuditInterceptorOptions>>();
+app.Services.GetRequiredService<IOptionsMonitor<EfAuditOptions>>();
 
 app.Lifetime.ApplicationStopping.Register(bus.Dispose);
 

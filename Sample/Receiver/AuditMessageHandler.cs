@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AuditTrail.Common;
+using Microsoft.AspNetCore.Mvc;
 using Server.Handlers;
 
 public class AuditMessageHandler
 {
-    private static PayloadedMessage? _records;
+    private static IAuditMessageHandler.OutgoingMessage? _records;
 
-    public Task Handle(PayloadedMessage auditMessage)
+    public Task Handle(IAuditMessageHandler.OutgoingMessage auditMessage)
     {
         //elastic client placed here
         _records = auditMessage;

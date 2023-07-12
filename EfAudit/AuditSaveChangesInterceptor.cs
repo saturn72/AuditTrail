@@ -8,7 +8,7 @@ namespace EfAudit
     public class AuditSaveChangesInterceptor : ISaveChangesInterceptor
     {
         protected static readonly Type ManyToManyType = typeof(IDictionary<string, object>);
-        private readonly IOptionsMonitor<AuditInterceptorOptions> _options;
+        private readonly IOptionsMonitor<EfAuditOptions> _options;
         private readonly IEventBus _eventBus;
         private readonly IHttpContextAccessor _accessor;
         private AuditRecord? _record;
@@ -26,7 +26,7 @@ namespace EfAudit
         public AuditSaveChangesInterceptor(
             IEventBus eventBus,
             IHttpContextAccessor accessor,
-            IOptionsMonitor<AuditInterceptorOptions> options)
+            IOptionsMonitor<EfAuditOptions> options)
         {
             _options = options;
             _eventBus = eventBus;

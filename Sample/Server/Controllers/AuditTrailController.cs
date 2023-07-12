@@ -1,5 +1,5 @@
 ﻿using AuditTrail.Common;
-using EfAudit.Common.Extractors;
+using EfAudit.Common.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers

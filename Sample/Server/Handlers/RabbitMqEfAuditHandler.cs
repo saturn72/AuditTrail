@@ -1,58 +1,21 @@
 ﻿
 using AuditTrail.Common;
 using EasyNetQ;
-using EfAudit.Common.Extractors;
-using System.Text.Json;
 
 namespace Server.Handlers
 {
-    public class RabbitMqEfAuditHandler
+    public class RabbitMqEfAuditHandler : IAuditMessageHandler
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        private readonly IServiceProvider _services;
+
+        public RabbitMqEfAuditHandler(IServiceProvider services)
         {
-            AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
-        public static async Task Handle(IServiceProvider services, AuditRecord record, CancellationToken cancellationToken)
+            _services = services;
+        }
+        public async Task Handle(IAuditMessageHandler.OutgoingMessage message, CancellationToken cancellationToken)
         {
-            var bus = services.GetRequiredService<IBus>();
-            var mapper = services.GetRequiredService<IAuditRecordToAuditMessageMapper>();
-            var msg = await mapper.MapAsync(record);
-
-            if (msg == default)
-                throw new ArgumentNullException(nameof(msg));
-
-            var payloadObject = new
-            {
-                error = msg.Error,
-                source = msg.Source,
-                subjectId = msg.SubjectId,
-                traceId = msg.TraceId,
-                transaction = new
-                {
-                    id = msg.ProviderInfo["transactionId"],
-                    trail = msg?.Trail?.Entries ?? Enumerable.Empty<object>(),
-                },
-            };
-            var payload = System.Text.Json.JsonSerializer.Serialize(payloadObject, JsonSerializerOptions);
-
-            var message = new PayloadedMessage
-            {
-                Version = msg.Version,
-                Key = "audit-trail",
-                Payload = payload
-            };
-
+            var bus = _services.GetRequiredService<IBus>();
             await bus.PubSub.PublishAsync(message, cancellationToken);
         }
-    }
-
-    public class PayloadedMessage
-    {
-        public string? Version { get; set; }
-        public string? Key { get; set; }
-        public string? Payload { get; set; }
     }
 }

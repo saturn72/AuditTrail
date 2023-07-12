@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -14,7 +13,7 @@ namespace EfAudit.Tests
         {
             var builder = WebApplication.CreateBuilder();
 
-            builder.Services.AddEfAudit(builder.Configuration);
+            builder.Services.AddEfAudit<TestAuditMessageHandler>(builder.Configuration);
 
             builder.Services.AddDbContext<CatalogContext>((serviceProvider, options) =>
             {

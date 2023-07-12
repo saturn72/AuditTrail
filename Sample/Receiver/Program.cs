@@ -1,6 +1,6 @@
 
+using AuditTrail.Common;
 using EasyNetQ;
-using Server.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +10,8 @@ builder.Services.AddSingleton(bus);
 builder.Services.AddScoped<AuditMessageHandler>();
 // Add services to the container.
 var app = builder.Build();
- 
-bus.PubSub.Subscribe<PayloadedMessage>("default", msg =>
+
+bus.PubSub.Subscribe<IAuditMessageHandler.OutgoingMessage>("default", msg =>
 {
     using var scope = app.Services.CreateScope();
     var ah = scope.ServiceProvider.GetRequiredService<AuditMessageHandler>();

@@ -1,10 +1,10 @@
 ﻿using static AuditTrail.Common.AuditTrailRecord;
 
-namespace EfAudit.Common.Extractors
+namespace EfAudit.Common.Mappers
 {
     public class DefaultAuditRecordToAuditMessageMapper : IAuditRecordToAuditMessageMapper
     {
-        public Task<AuditMessage?> MapAsync(AuditRecord record)
+        public Task<AuditMessage?> MapAsync(AuditRecord record, CancellationToken cancellationToken = default)
         {
             if (record == null || record.Entities == null || !record.Entities.Any())
                 return default;
