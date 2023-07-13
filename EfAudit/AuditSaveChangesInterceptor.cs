@@ -145,6 +145,7 @@ namespace EfAudit
 
             return ea;
 
+
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
                 return entry.Properties
