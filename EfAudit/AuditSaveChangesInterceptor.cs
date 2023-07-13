@@ -145,11 +145,10 @@ namespace EfAudit
 
             return ea;
 
-
             IEnumerable<ModifiedProperty>? getModifiedProperties()
             {
-                var m = entry.Properties.Where(p => p.IsModified && !p.CurrentValue.Equals(p.OriginalValue));
-                return m?
+                return entry.Properties
+                    .Where(p => p.IsModified && p.CurrentValue != p.OriginalValue)
                     .Select(c => new ModifiedProperty
                     {
                         Name = c.Metadata.Name,

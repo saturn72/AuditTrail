@@ -18,7 +18,7 @@ namespace AuditTrail.Common
 
         public Task<string> BuildAsync(string? subjectId, CancellationToken cancellationToken)
         {
-            var user = _accessor.HttpContext.User;
+            var user = _accessor.HttpContext?.User;
             if (user == null || user.Claims == null || !user.Claims.Any())
                 return Task.FromResult(string.Empty);
 
