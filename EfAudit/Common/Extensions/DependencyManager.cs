@@ -23,9 +23,20 @@ namespace EfAudit.Extensions
 
                 var arhType = typeof(IAuditRecordHandler);
                 //these were registered explicitly
-                var exp = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-                    .Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && arhType.IsAssignableFrom(t))
-                    .Where(t => regAsARH.Any(x => x.GetType() != t)).ToList();
+                var exp = new List<Type>();
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        var types = asm.GetTypes()
+                                .Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && arhType.IsAssignableFrom(t))
+                                .Where(t => regAsARH.Any(x => x.GetType() != t)).ToList();
+
+                        if (types != null && types.Any())
+                            exp.AddRange(types);
+                    }
+                    catch { }
+                }
 
                 foreach (var expType in exp)
                 {
