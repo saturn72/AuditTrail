@@ -31,7 +31,7 @@ We would like to gain access to the change metadata as well (who perfomed the ch
 
 ## (Some) Auditing options
 
-[Data Access Layer Wrapping](#Data-Access-Layer-Interception)
+[Data Access Layer Wrapping](#Data-Access-Layer-Wrapping)
 
 [Business Logic Explicit Audit Declaraion](#Business-Logic-Explicit-Audit-Declaraion)
 
@@ -95,11 +95,19 @@ If execution ceased after line #2 was successfully performed, the audit trail en
 Adding another audit-trail mechanism as a fallback option solves this issue
 
 ### Database Built-in Functionality
-Database Built-in Functionality
-Database Built-in Functionality
-Database Built-in Functionality
-Database Built-in Functionality
-Database Built-in Functionality
+Some db engines have built-in mechanism for reflecting data-table/indexes changes
+This feature may require configuration and may adds some performance issues and/or limitations. Please consult your db provider documentation.
+
+This option monitors data changes in the lowest layer possible and is strongly binded to database features.
+It is executed "inside" the database engine and is "pure" functional outcome.
+As such, it provides 100% reflection of the changes, but misses any app-level contextual aspects
+
+The research of this aspect is focused on `Microsoft SqlServer`.
+`SqlServer` provide built in audit mechanism, see: [Change Data Capture Sql Server](https://learn.microsoft.com/en-us/sql/relational-databases/track-changes/about-change-data-capture-sql-server)
+In general, once `CDC` is enabled and configured, tables for holding the audit info are created. From this point these tables needs to querid to fetch the data.
+As mentioned prior, the data contained in these tables contains the diff in data, and __may__ contain sql transactional contextual info only (transaction info, timestamps, etc).
+
+_Important:_ The `CDC` feature comes with performance price as it wrapps the transactions with atomic operation (the same concept described in [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping).
 
 ### Managed Service
 Managed Service
