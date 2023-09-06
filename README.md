@@ -1,6 +1,6 @@
 [![EfAudit ci](https://github.com/saturn72/EfAuditTrail/actions/workflows/cont-delivery.yml/badge.svg)](https://github.com/saturn72/EfAuditTrail/actions/workflows/cont-delivery.yml)
 # EfAuditTrail
-`Entity Framework` AuditTrail solution in your `C#` project
+`Entity Framework` AuditTrail package in your `C#` project
 
 
 ## Usage (see `Sample` directory)
@@ -17,3 +17,52 @@ In your code define a handler of the type, and add it to the EfAudit (see [Setup
 
 ### Example:
 https://github.com/saturn72/EfAuditTrail/blob/614cc559896ca1a5d5af2ef857ecd0fda02f91ae/Sample/Server/Controllers/AuditTrailController.cs#L22-L33
+
+
+# Undestand the problem
+The problem that the `EfAudit` package tries to solve is how to monitor all databases changes (insert, update and delete operations). It utilizes the `interception` capabilities that `EFCore` provides to create standard way to expose data table changes.
+Utilizing `EfCore` mechansims are not the only way this problem can be solved, and this section is dedicated to go over some other options to solve this issue.
+
+## (Some) Auditing options
+[Data Access Layer Interception](#Data-Access-Layer-Interception)
+* <a id="Data-Access-Layer-Interception">Data Access Layer Interception</a>
+* <a id="Business Logic Explicit Audit Declaraion">Business Logic Explicit Audit Declaraion</a>
+* <a id="Database Built-in Functionality">Database Built-in Functionality</a>
+* <a id="Managed Service">Managed Service</a>
+
+### Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+Data Access Layer Interception
+
+### Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+Business Logic Explicit Audit Declaraion
+
+
+### Database Built-in Functionality
+Database Built-in Functionality
+Database Built-in Functionality
+Database Built-in Functionality
+Database Built-in Functionality
+Database Built-in Functionality
+
+### Managed Service
+Managed Service
+Managed Service
+Managed Service
+Managed Service
+Managed Service
+Managed Service
