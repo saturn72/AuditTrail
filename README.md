@@ -31,7 +31,7 @@ We would like to gain access to the change metadata as well (who perfomed the ch
 
 ## (Some) Auditing options
 
-[Data Access Layer Interception](#Data-Access-Layer-Interception)
+[Data Access Layer Wrapping](#Data-Access-Layer-Interception)
 
 [Business Logic Explicit Audit Declaraion](#Business-Logic-Explicit-Audit-Declaraion)
 
@@ -68,6 +68,7 @@ _Pseudo code: DAL with transaction_
   4.    add_audit_trail_entrye(new-entry, execution-context)
   5.    close_transaction
 ```
+__`EfAudit` Package uses this concept by utilizing the built-in interception capabilities `EfCore` provides for relational databases__
 
 ### Business Logic Explicit Audit Declaraion
 Business Logic Explicit Audit Declaraion
