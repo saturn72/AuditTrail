@@ -25,10 +25,9 @@ Utilizing `EfCore` mechansims are not the only way this problem can be solved, a
 
 ## (Some) Auditing options
 [Data Access Layer Interception](#Data-Access-Layer-Interception)
-* <a id="Data-Access-Layer-Interception">Data Access Layer Interception</a>
-* <a id="Business Logic Explicit Audit Declaraion">Business Logic Explicit Audit Declaraion</a>
-* <a id="Database Built-in Functionality">Database Built-in Functionality</a>
-* <a id="Managed Service">Managed Service</a>
+[Business Logic Explicit Audit Declaraion](#Business-Logic-Explicit-Audit-Declaraion)
+[Database Built-in Functionality](#Database-Built-in-Functionality)
+[Managed Service](#Managed-Service)
 
 ### Data Access Layer Interception
 Data Access Layer Interception
