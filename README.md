@@ -41,18 +41,22 @@ We would like to gain access to the change metadata as well (who perfomed the ch
 
 
 ### Data Access Layer Wrapping 
-This options wraps the `DAL`'s unit-of-work with the audit logic. It is executed on application runtime, and is not part of the functional aspects of the database
-As such, it is easier to add runtime execution aspects to the audit trail (identity aspects, hosting, ip, etc)
+see: [N-Tier Architecture](https://en.wikipedia.org/wiki/Multitier_architecture)
 
-_Pseudo code: DAL_
+This option wraps the `DAL`'s unit-of-work with the audit logic. 
+It is executed on application runtime, and is not part of the functional aspects of the database
+As such, it is easier to add runtime execution aspects to the audit trail (identity aspects, hosting, ip, etc)
+Using this option locates the audit-trail creation management at the lowest _runtime_ layer of data management.
+
 ```
+_Pseudo code: DAL_
   1. insert_new_entity(values-to-insert, execution-context)
   2.   new-entry = unit_of_work.insert(values-to-insert)
   3.   add_audit_trail_entrye(new-entry, execution-context)
 ```
 The pseudo above describes the concept of wrapping the unit-of-work for insertion operation
 
-If execution ceased between line #2 and #3, or inside #3 execution, the audit trail entry is not recorded 
+If execution ceased after line #2 was successfully performed, the audit trail entry is not recorded 
 For this there are 2 possible solutions:
 * Wrap both functions in same atomic context (transaction)
     _Notes:_
@@ -60,8 +64,8 @@ For this there are 2 possible solutions:
     * May not be supported by runtime/database engine
 * Add another audit-trail mechanism as a fallback option (one that is not executed in runtime)
 
-_Pseudo code: DAL with transaction_
 ```
+_Pseudo code: DAL with transaction_
   1.  insert_new_entity(values-to-insert, execution-context)
   2.    open_transaction
   3.    new-entry = unit_of_work.insert(values-to-insert)
@@ -71,16 +75,24 @@ _Pseudo code: DAL with transaction_
 __`EfAudit` Package uses this concept by utilizing the built-in interception capabilities `EfCore` provides for relational databases__
 
 ### Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
-Business Logic Explicit Audit Declaraion
+see: [N-Tier Architecture](https://en.wikipedia.org/wiki/Multitier_architecture)
 
+This option declares persistency layer changes within the `Business-Logic` layer. 
+It is executed on application runtime, and is not part of the functional aspects of the database
+As such, it is easier to add runtime execution aspects to the audit trail, include business logic specifics
+Using this option locates the audit-trail creation management at the middle/highest _runtime_ layer of data management (depends on implementation)
+
+```
+_Pseudo code: Business Logic_
+  1.  create_new(values-to-insert)
+  2.    new-entry = dal.insert(values-to-insert)
+  3.    execution_context = get_execution_context()
+  4.    declare_created(new-entry, execution-context)
+```
+The pseudo above describes the concept of adding insertion operation to the business logic
+
+If execution ceased after line #2 was successfully performed, the audit trail entry is not recorded 
+Adding another audit-trail mechanism as a fallback option solves this issue
 
 ### Database Built-in Functionality
 Database Built-in Functionality
