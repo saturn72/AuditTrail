@@ -26,10 +26,12 @@ Utilizing `EfCore` mechansims are not the only way this problem can be solved, a
 
 ## Requirements
 We would like to set guideline for auditing all data changes in database. 
-Once application data-table changes (added or modified) we would like to record the change and eventually delivered the entity' lifecycle (audit-trail)
+
+Once application data-table changes (added or modified) we would like to record the change and eventually delivered the entity' lifecycle (audit-trail).
+
 We would like to gain access to the change metadata as well (who perfomed the change, when, which client was used etc.)
 
-## (Some) Auditing options
+## Inspected Auditing options
 
 [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping)
 
@@ -43,9 +45,11 @@ We would like to gain access to the change metadata as well (who perfomed the ch
 ### Data Access Layer Wrapping 
 see: [N-Tier Architecture](https://en.wikipedia.org/wiki/Multitier_architecture)
 
-This option wraps the `DAL`'s unit-of-work with the audit logic. 
+This option wraps the `DAL`'s unit-of-work with the audit logic.
+
 It is executed on application runtime, and is not part of the functional aspects of the database
-As such, it is easier to add runtime execution aspects to the audit trail (identity aspects, hosting, ip, etc)
+As such, it is easier to add runtime execution aspects to the audit trail (identity aspects, hosting, ip, etc).
+
 Using this option locates the audit-trail creation management at the lowest _runtime_ layer of data management.
 
 ```
@@ -57,6 +61,7 @@ _Pseudo code: DAL_
 The pseudo above describes the concept of wrapping the unit-of-work for insertion operation
 
 If execution ceased after line #2 was successfully performed, the audit trail entry is not recorded 
+
 For this there are 2 possible solutions:
 * Wrap both functions in same atomic context (transaction)
     _Notes:_
@@ -78,8 +83,11 @@ __`EfAudit` Package uses this concept by utilizing the built-in interception cap
 see: [N-Tier Architecture](https://en.wikipedia.org/wiki/Multitier_architecture)
 
 This option declares persistency layer changes within the `Business-Logic` layer. 
-It is executed on application runtime, and is not part of the functional aspects of the database
+
+It is executed on application runtime, and is not part of the functional aspects of the database.
+
 As such, it is easier to add runtime execution aspects to the audit trail, include business logic specifics
+
 Using this option locates the audit-trail creation management at the middle/highest _runtime_ layer of data management (depends on implementation)
 
 ```
@@ -91,20 +99,26 @@ _Pseudo code: Business Logic_
 ```
 The pseudo above describes the concept of adding insertion operation to the business logic
 
-If execution ceased after line #2 was successfully performed, the audit trail entry is not recorded 
+If execution ceased after line #2 was successfully performed, the audit trail entry is not recorded.
 Adding another audit-trail mechanism as a fallback option solves this issue
 
 ### Database Built-in Functionality
-Some db engines have built-in mechanism for reflecting data-table/indexes changes
+Some db engines have built-in mechanism for reflecting data-table/indexes changes.
+
 This feature may require configuration and may adds some performance issues and/or limitations. Please consult your db provider documentation.
 
 This option monitors data changes in the lowest layer possible and is strongly binded to database features.
+
 It is executed "inside" the database engine and is "pure" functional outcome.
+
 As such, it provides 100% reflection of the changes, but misses any app-level contextual aspects
 
 The research of this aspect is focused on `Microsoft SqlServer`.
-`SqlServer` provide built in audit mechanism, see: [Change Data Capture Sql Server](https://learn.microsoft.com/en-us/sql/relational-databases/track-changes/about-change-data-capture-sql-server)
+
+`SqlServer` provides built in audit mechanism, see: [Change Data Capture Sql Server](https://learn.microsoft.com/en-us/sql/relational-databases/track-changes/about-change-data-capture-sql-server)
+
 In general, once `CDC` is enabled and configured, tables for holding the audit info are created. From this point these tables needs to querid to fetch the data.
+
 As mentioned prior, the data contained in these tables contains the diff in data, and __may__ contain sql transactional contextual info only (transaction info, timestamps, etc).
 
 _Important:_ The `CDC` feature comes with performance price as it wraps transactions the same concept described in [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping).
