@@ -107,7 +107,7 @@ The research of this aspect is focused on `Microsoft SqlServer`.
 In general, once `CDC` is enabled and configured, tables for holding the audit info are created. From this point these tables needs to querid to fetch the data.
 As mentioned prior, the data contained in these tables contains the diff in data, and __may__ contain sql transactional contextual info only (transaction info, timestamps, etc).
 
-_Important:_ The `CDC` feature comes with performance price as it wrapps the transactions with atomic operation (the same concept described in [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping).
+_Important:_ The `CDC` feature comes with performance price as it wraps transactions the same concept described in [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping).
 
 ### Managed Service
 This option refer to managed audit service provided by the persistency layer host. Please consult the host documentation regard implementation and pricing.
