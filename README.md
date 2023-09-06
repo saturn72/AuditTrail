@@ -24,10 +24,15 @@ The problem that the `EfAudit` package tries to solve is how to monitor all data
 Utilizing `EfCore` mechansims are not the only way this problem can be solved, and this section is dedicated to go over some other options to solve this issue.
 
 ## (Some) Auditing options
+
 [Data Access Layer Interception](#Data-Access-Layer-Interception)
+
 [Business Logic Explicit Audit Declaraion](#Business-Logic-Explicit-Audit-Declaraion)
+
 [Database Built-in Functionality](#Database-Built-in-Functionality)
+
 [Managed Service](#Managed-Service)
+
 
 ### Data Access Layer Interception
 Data Access Layer Interception
