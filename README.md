@@ -110,9 +110,4 @@ As mentioned prior, the data contained in these tables contains the diff in data
 _Important:_ The `CDC` feature comes with performance price as it wrapps the transactions with atomic operation (the same concept described in [Data Access Layer Wrapping](#Data-Access-Layer-Wrapping).
 
 ### Managed Service
-Managed Service
-Managed Service
-Managed Service
-Managed Service
-Managed Service
-Managed Service
+This option refer to managed audit service provided by the persistency layer host. Please consult the host documentation regard implementation and pricing.
